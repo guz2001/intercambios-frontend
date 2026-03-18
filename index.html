@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Intercambios - UdeA</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            color: #2d3748;
+        }
+
+        header {
+            background: #2b6cb0;
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        header h1 { font-size: 1.4rem; font-weight: 600; }
+        header p { font-size: 0.85rem; opacity: 0.85; }
+
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+
+        .card h2 {
+            font-size: 1rem;
+            color: #2b6cb0;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .grupos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .grupo-btn {
+            background: #ebf8ff;
+            border: 2px solid #bee3f8;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #2b6cb0;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .grupo-btn:hover, .grupo-btn.activo {
+            background: #2b6cb0;
+            color: white;
+            border-color: #2b6cb0;
+        }
+
+        .subgrupos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .subgrupo-btn {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .subgrupo-btn:hover, .subgrupo-btn.activo {
+            background: #ebf8ff;
+            border-color: #2b6cb0;
+            color: #2b6cb0;
+        }
+
+        .badge {
+            background: #2b6cb0;
+            color: white;
+            border-radius: 20px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+        }
+
+        .alimentos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.75rem;
+        }
+
+        .alimento-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .alimento-card:hover, .alimento-card.activo {
+            background: #2b6cb0;
+            color: white;
+            border-color: #2b6cb0;
+        }
+
+        .alimento-card .nombre { font-weight: 600; font-size: 0.9rem; }
+        .alimento-card .porcion { font-size: 0.8rem; opacity: 0.7; margin-top: 0.3rem; }
+
+        .intercambios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .intercambio-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .intercambio-card:hover { border-color: #2b6cb0; box-shadow: 0 2px 8px rgba(43,108,176,0.15); }
+
+        .intercambio-card .nombre { font-weight: 600; font-size: 0.95rem; color: #2d3748; }
+        .intercambio-card .porcion { font-size: 0.8rem; color: #718096; margin: 0.3rem 0 0.75rem; }
+
+        .nutrientes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+        }
+
+        .nutriente {
+            background: white;
+            border-radius: 6px;
+            padding: 0.4rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .nutriente .valor { font-weight: 700; font-size: 0.95rem; color: #2b6cb0; }
+        .nutriente .label { font-size: 0.7rem; color: #718096; }
+
+        .kcal-badge {
+            display: inline-block;
+            background: #c6f6d5;
+            color: #276749;
+            border-radius: 20px;
+            padding: 0.2rem 0.7rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .seleccionado-info {
+            background: #ebf8ff;
+            border: 2px solid #2b6cb0;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .seleccionado-info .nombre { font-weight: 700; color: #2b6cb0; }
+        .seleccionado-info .porcion { font-size: 0.85rem; color: #4a5568; }
+
+        .empty {
+            text-align: center;
+            color: #a0aec0;
+            padding: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .loading {
+            text-align: center;
+            color: #4299e1;
+            padding: 1rem;
+        }
+
+        section { display: none; }
+        section.visible { display: block; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>🥗 Lista de Intercambios</h1>
+        <p>Universidad de Antioquia — Escuela de Nutrición y Dietética</p>
+    </div>
+</header>
+
+<div class="container">
+
+    <!-- PASO 1: Grupos -->
+    <div class="card">
+        <h2>① Selecciona un grupo de alimentos</h2>
+        <div class="grupos-grid" id="grupos-container">
+            <div class="loading">Cargando grupos...</div>
+        </div>
+    </div>
+
+    <!-- PASO 2: Subgrupos -->
+    <section id="seccion-subgrupos">
+        <div class="card">
+            <h2>② Selecciona un subgrupo</h2>
+            <div class="subgrupos-list" id="subgrupos-container"></div>
+        </div>
+    </section>
+
+    <!-- PASO 3: Alimentos -->
+    <section id="seccion-alimentos">
+        <div class="card">
+            <h2>③ Selecciona un alimento</h2>
+            <div class="alimentos-grid" id="alimentos-container"></div>
+        </div>
+    </section>
+
+    <!-- PASO 4: Intercambios -->
+    <section id="seccion-intercambios">
+        <div class="card">
+            <h2>④ Intercambios posibles</h2>
+            <div id="seleccionado-container"></div>
+            <div class="intercambios-grid" id="intercambios-container"></div>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    const API = 'http://localhost:8080/api';
+
+    // ── Cargar grupos al iniciar ──
+    async function cargarGrupos() {
+        const res = await fetch(`${API}/grupos`);
+        const grupos = await res.json();
+        const container = document.getElementById('grupos-container');
+        container.innerHTML = '';
+        grupos.forEach(g => {
+            const btn = document.createElement('button');
+            btn.className = 'grupo-btn';
+            btn.textContent = g.nombre;
+            btn.onclick = () => seleccionarGrupo(g.id, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    // ── Seleccionar grupo ──
+    async function seleccionarGrupo(grupoId, btn) {
+        document.querySelectorAll('.grupo-btn').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+
+        ocultarSecciones();
+        document.getElementById('subgrupos-container').innerHTML = '<div class="loading">Cargando...</div>';
+        mostrar('seccion-subgrupos');
+
+        const res = await fetch(`${API}/subgrupos/por-grupo/${grupoId}`);
+        const subgrupos = await res.json();
+
+        const container = document.getElementById('subgrupos-container');
+        container.innerHTML = '';
+        subgrupos.forEach(s => {
+            const btn = document.createElement('button');
+            btn.className = 'subgrupo-btn';
+            btn.innerHTML = `<span>${s.nombre}</span><span class="badge">${s.kcalPromedio} kcal prom.</span>`;
+            btn.onclick = () => seleccionarSubgrupo(s.id, btn);
+            container.appendChild(btn);
+        });
+    }
+
+    // ── Seleccionar subgrupo ──
+    async function seleccionarSubgrupo(subgrupoId, btn) {
+        document.querySelectorAll('.subgrupo-btn').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+
+        document.getElementById('seccion-alimentos').classList.remove('visible');
+        document.getElementById('seccion-intercambios').classList.remove('visible');
+        document.getElementById('alimentos-container').innerHTML = '<div class="loading">Cargando...</div>';
+        mostrar('seccion-alimentos');
+
+        const res = await fetch(`${API}/alimentos/por-subgrupo/${subgrupoId}`);
+        const alimentos = await res.json();
+
+        const container = document.getElementById('alimentos-container');
+        container.innerHTML = '';
+        alimentos.forEach(a => {
+            const card = document.createElement('div');
+            card.className = 'alimento-card';
+            card.innerHTML = `
+                <div class="nombre">${a.nombre}</div>
+                <div class="porcion">${a.porcionGramos}g · ${a.descripcionMedida}</div>
+            `;
+            card.onclick = () => seleccionarAlimento(a, card);
+            container.appendChild(card);
+        });
+    }
+
+    // ── Seleccionar alimento ──
+    async function seleccionarAlimento(alimento, card) {
+        document.querySelectorAll('.alimento-card').forEach(c => c.classList.remove('activo'));
+        card.classList.add('activo');
+
+        document.getElementById('intercambios-container').innerHTML = '<div class="loading">Cargando intercambios...</div>';
+        mostrar('seccion-intercambios');
+
+        const [intercambiosRes] = await Promise.all([
+            fetch(`${API}/alimentos/${alimento.id}/intercambios`)
+        ]);
+        const intercambios = await intercambiosRes.json();
+
+        // Mostrar alimento seleccionado
+        document.getElementById('seleccionado-container').innerHTML = `
+            <div class="seleccionado-info">
+                <div>
+                    <div class="nombre">Alimento seleccionado: ${alimento.nombre}</div>
+                    <div class="porcion">${alimento.porcionGramos}g · ${alimento.descripcionMedida}</div>
+                </div>
+                <span style="color:#718096;font-size:0.85rem">${intercambios.length} intercambios</span>
+            </div>
+        `;
+
+        const container = document.getElementById('intercambios-container');
+        container.innerHTML = '';
+
+        if (intercambios.length === 0) {
+            container.innerHTML = '<div class="empty">No se encontraron intercambios para este alimento.</div>';
+            return;
+        }
+
+        // Cargar nutrientes de cada intercambio
+        for (const a of intercambios) {
+            let nutrientesHTML = '';
+            try {
+                const nRes = await fetch(`${API}/nutrientes/alimento/${a.id}`);
+                const n = await nRes.json();
+                nutrientesHTML = `
+                    <div class="kcal-badge">⚡ ${n.kcal} kcal</div>
+                    <div class="nutrientes">
+                        <div class="nutriente"><div class="valor">${n.proteinaG}g</div><div class="label">Proteína</div></div>
+                        <div class="nutriente"><div class="valor">${n.grasaTotalG}g</div><div class="label">Grasa</div></div>
+                        <div class="nutriente"><div class="valor">${n.choG}g</div><div class="label">CHO</div></div>
+                        <div class="nutriente"><div class="valor">${n.calcioMg}mg</div><div class="label">Calcio</div></div>
+                        <div class="nutriente"><div class="valor">${n.hierroMg}mg</div><div class="label">Hierro</div></div>
+                        <div class="nutriente"><div class="valor">${n.vitaminaCMg}mg</div><div class="label">Vit. C</div></div>
+                    </div>
+                `;
+            } catch(e) {
+                nutrientesHTML = '<div class="empty">Sin datos nutricionales</div>';
+            }
+
+            const card = document.createElement('div');
+            card.className = 'intercambio-card';
+            card.innerHTML = `
+                <div class="nombre">${a.nombre}</div>
+                <div class="porcion">${a.porcionGramos}g · ${a.descripcionMedida}</div>
+                ${nutrientesHTML}
+            `;
+            container.appendChild(card);
+        }
+    }
+
+    // ── Utilidades ──
+    function mostrar(id) {
+        document.getElementById(id).classList.add('visible');
+    }
+
+    function ocultarSecciones() {
+        ['seccion-subgrupos','seccion-alimentos','seccion-intercambios'].forEach(id => {
+            document.getElementById(id).classList.remove('visible');
+        });
+    }
+
+    cargarGrupos();
+</script>
+
+</body>
+</html>
