@@ -3,6 +3,7 @@ Crecion de calculadora
 */
 document.getElementById('calculadoraForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            //si la carpeta raiz no se ubica bien da error al cargar el script, revisar la ruta del script en el html
 
             const sexo = document.querySelector('input[name="sexo"]:checked').value;
             const edad = parseFloat(document.getElementById('edad').value);
