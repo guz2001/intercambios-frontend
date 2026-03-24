@@ -13,6 +13,7 @@ document.getElementById('calculadoraForm').addEventListener('submit', function(e
 
             let tmb;
             //formulas para cada sexo o edad se agregan niños y niñas
+            
             //tener en cuenta que los datos son diferentes para niños y niñas, por lo que se deben agregar las formulas correspondientes
             if (sexo === 'hombre') {
                 tmb = 66.4 + (13.700 * peso) + (5.000 * altura) - ( 6.800 * edad);
