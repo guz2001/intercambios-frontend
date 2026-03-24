@@ -286,5 +286,5 @@ async function seleccionarAlimento(alimento, card) {
         }
     }
 }
-
+//no se que hace esto jajajajaja
 document.addEventListener('DOMContentLoaded', cargarGrupos);
