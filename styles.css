@@ -1,0 +1,274 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --color-bg: #f0f4f8;
+    --color-text: #2d3748;
+    --color-primary: #2b6cb0;
+    --color-primary-light: #ebf8ff;
+    --color-border: #e2e8f0;
+    --color-muted: #718096;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --radius-md: 8px;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+}
+
+header {
+    background: var(--color-primary);
+    color: white;
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+header p {
+    font-size: 0.85rem;
+    opacity: 0.85;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.5rem;
+}
+
+.card h2 {
+    font-size: 1rem;
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.grupos-grid,
+.alimentos-grid,
+.intercambios-grid {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.grupos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+}
+
+.alimentos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.intercambios-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.subgrupos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.grupo-btn,
+.subgrupo-btn,
+.alimento-card,
+.intercambio-card {
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.grupo-btn {
+    background: var(--color-primary-light);
+    border: 2px solid #bee3f8;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    font-weight: 500;
+    text-align: center;
+}
+
+
+.grupo-btn:focus-visible,
+.subgrupo-btn:focus-visible,
+.alimento-card:focus-visible {
+    outline: 3px solid #90cdf4;
+    outline-offset: 2px;
+}
+
+.grupo-btn:hover,
+.grupo-btn.activo {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.subgrupo-btn {
+    background: #f7fafc;
+    border: 1px solid var(--color-border);
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subgrupo-btn:hover,
+.subgrupo-btn.activo {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.badge {
+    background: var(--color-primary);
+    color: white;
+    border-radius: 20px;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+}
+
+.alimento-card,
+.intercambio-card {
+    background: #f7fafc;
+    border: 1px solid var(--color-border);
+    padding: 0.75rem;
+}
+
+.alimento-card:hover,
+.alimento-card.activo {
+    background: var(--color-primary);
+    color: white;
+    border-color: var(--color-primary);
+}
+
+.intercambio-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 2px 8px rgba(43, 108, 176, 0.15);
+}
+
+.nombre {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.porcion {
+    font-size: 0.8rem;
+    color: var(--color-muted);
+    margin-top: 0.3rem;
+}
+
+.alimento-card .porcion,
+.intercambio-card .porcion {
+    margin-bottom: 0.75rem;
+}
+
+.nutrientes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+}
+
+.nutriente {
+    background: white;
+    border-radius: 6px;
+    padding: 0.4rem;
+    text-align: center;
+    border: 1px solid var(--color-border);
+}
+
+.valor {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--color-primary);
+}
+
+.label {
+    font-size: 0.7rem;
+    color: var(--color-muted);
+}
+
+.kcal-badge {
+    display: inline-block;
+    background: #c6f6d5;
+    color: #276749;
+    border-radius: 20px;
+    padding: 0.2rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.seleccionado-info {
+    background: var(--color-primary-light);
+    border: 2px solid var(--color-primary);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.seleccionado-info .nombre {
+    color: var(--color-primary);
+}
+
+.meta-count {
+    color: var(--color-muted);
+    font-size: 0.85rem;
+}
+
+.empty,
+.loading {
+    text-align: center;
+    padding: 1rem;
+}
+
+.empty {
+    color: #a0aec0;
+    font-size: 0.95rem;
+}
+
+.loading {
+    color: #4299e1;
+}
+
+.error {
+    text-align: center;
+    color: #c53030;
+    padding: 1rem;
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: var(--radius-md);
+}
+
+section {
+    display: none;
+}
+
+section.visible {
+    display: block;
+}
