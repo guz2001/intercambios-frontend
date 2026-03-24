@@ -1,3 +1,6 @@
+/*
+Crecion de calculadora 
+*/
 document.getElementById('calculadoraForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
