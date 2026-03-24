@@ -11,10 +11,14 @@ document.getElementById('calculadoraForm').addEventListener('submit', function(e
             const actividad = parseFloat(document.getElementById('actividad').value);
 
             let tmb;
-
+            //formulas para cada sexo o edad
             if (sexo === 'hombre') {
-                tmb = 88.362 + (13.397 * peso) + (4.799 * altura) - (5.677 * edad);
+                tmb = 66.4 + (13.700 * peso) + (5.000 * altura) - ( 6.800 * edad);
             } else if( sexo === 'mujer'){
+                tmb = 655.1 + (9.563 * peso) + (1.850 * altura) - (4.676* edad);
+            } else if (sexo === 'niño') {
+                tmb = 88.362 + (13.397 * peso) + (4.799 * altura) - (5.677 * edad);
+            }else if (sexo === 'niña') {
                 tmb = 655.1 + (9.563 * peso) + (1.850 * altura) - (4.676* edad);
             }
 
