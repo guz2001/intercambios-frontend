@@ -1,4 +1,4 @@
 # intercambios-frontend 
-#aca va la documentacion pero hay cosas que se me olvidaron que hacian jajaj
+#aca va la documentacion de a poco se va agregando
 #se conecta la api con el frontend
-#jesus is my god and the only 
+#god jehova is only god
