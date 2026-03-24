@@ -11,7 +11,7 @@ document.getElementById('calculadoraForm').addEventListener('submit', function(e
             const actividad = parseFloat(document.getElementById('actividad').value);
 
             let tmb;
-            //formulas para cada sexo o edad
+            //formulas para cada sexo o edad se agregan niños y niñas
             if (sexo === 'hombre') {
                 tmb = 66.4 + (13.700 * peso) + (5.000 * altura) - ( 6.800 * edad);
             } else if( sexo === 'mujer'){
