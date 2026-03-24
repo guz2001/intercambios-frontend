@@ -204,16 +204,39 @@
 
         section { display: none; }
         section.visible { display: block; }
+        
+        #titulo1{
+            justify-items: center;
+            text-align: center;
+            align-items: center;
+            font-size: 45px;
+        }
+       
+        .inicio{
+            text-align: center;
+            align-items: center;
+            justify-items: center;
+            display: flexbox;
+            flex-direction: column;
+        }
+        header{
+            text-align: center;
+            align-items: center;
+            justify-items: center;
+            
+        }
     </style>
 </head>
 <body>
 
 <header>
-    <div>
-        <h1>🥗 Lista de Intercambios</h1>
-        <p>Universidad de Antioquia — Escuela de Nutrición y Dietética</p>
+    <div class="inicio">
+        <h1 id="titulo1"> Lista de Intercambios</h1>
+        <nav id="titulo2">Nutrición y Dietética</nav>
     </div>
+    
 </header>
+
 
 <div class="container">
 
