@@ -23,8 +23,9 @@ document.getElementById('calculadoraForm').addEventListener('submit', function(e
             }
 
             const get = tmb * actividad;
-
+            //buscar datos en el html y mostrar resultado
             document.getElementById('tmb').textContent = Math.round(tmb);
+            
             document.getElementById('get').textContent = Math.round(get);
             document.getElementById('resultado').classList.add('show');
         });
