@@ -14,8 +14,8 @@ document.getElementById('calculadoraForm').addEventListener('submit', function(e
 
             if (sexo === 'hombre') {
                 tmb = 88.362 + (13.397 * peso) + (4.799 * altura) - (5.677 * edad);
-            } else {
-                tmb = 447.593 + (9.247 * peso) + (3.098 * altura) - (4.330 * edad);
+            } else if( sexo === 'mujer'){
+                tmb = 655.1 + (9.563 * peso) + (1.850 * altura) - (4.676* edad);
             }
 
             const get = tmb * actividad;
