@@ -1,4 +1,13 @@
+const API_URL        = 'http://localhost:8080/api';
 const HISTORIAL_KEY_CALC = 'calculadora_historial';
+
+// Mapeo form → enum Sexo de la API (MASCULINO / FEMENINO)
+const SEXO_API = {
+    hombre: 'MASCULINO',
+    niño:   'MASCULINO',
+    mujer:  'FEMENINO',
+    niña:   'FEMENINO'
+};
 
 const animarContador = (elemento, valorFinal, duracion = 900) => {
     const inicio = performance.now();
@@ -12,16 +21,26 @@ const animarContador = (elemento, valorFinal, duracion = 900) => {
 };
 
 const ACTIVIDAD_LABELS = {
-    '1.2': 'Sedentario',
+    '1.2':   'Sedentario',
     '1.375': 'Actividad leve',
-    '1.55': 'Actividad moderada',
+    '1.55':  'Actividad moderada',
     '1.725': 'Actividad intensa',
-    '1.9': 'Actividad muy intensa'
+    '1.9':   'Actividad muy intensa'
 };
 
 const sanitizeCalc = (value) => String(value ?? '').replace(/[&<>'"]/g, (c) => (
     { '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]
 ));
+
+const mostrarErrorCalc = (msg) => {
+    const el = document.getElementById('calc-error');
+    el.textContent = msg;
+    el.classList.add('show');
+};
+
+const ocultarErrorCalc = () => {
+    document.getElementById('calc-error').classList.remove('show');
+};
 
 const renderHistorialCalculadora = () => {
     const contenedor = document.getElementById('historial-calc-container');
@@ -52,39 +71,62 @@ const renderHistorialCalculadora = () => {
     contenedor.appendChild(fragment);
 };
 
-document.getElementById('calculadoraForm').addEventListener('submit', function(e) {
+document.getElementById('calculadoraForm').addEventListener('submit', async function(e) {
     e.preventDefault();
+    ocultarErrorCalc();
 
-    const sexo = document.querySelector('input[name="sexo"]:checked').value;
-    const edad = parseFloat(document.getElementById('edad').value);
-    const peso = parseFloat(document.getElementById('peso').value);
-    const altura = parseFloat(document.getElementById('altura').value);
+    const sexo      = document.querySelector('input[name="sexo"]:checked').value;
+    const edad      = parseInt(document.getElementById('edad').value, 10);
+    const peso      = parseFloat(document.getElementById('peso').value);
+    const altura    = parseFloat(document.getElementById('altura').value);
     const actividad = parseFloat(document.getElementById('actividad').value);
 
-    let tmb;
-    if (sexo === 'hombre') {
-        tmb = 66.4 + (13.700 * peso) + (5.000 * altura) - (6.800 * edad);
-    } else if (sexo === 'mujer') {
-        tmb = 655.1 + (9.563 * peso) + (1.850 * altura) - (4.676 * edad);
-    } else if (sexo === 'niño') {
-        tmb = 88.362 + (13.397 * peso) + (4.799 * altura) - (5.677 * edad);
-    } else if (sexo === 'niña') {
-        tmb = 655.1 + (9.563 * peso) + (1.850 * altura) - (4.676 * edad);
+    const btn = this.querySelector('button[type="submit"]');
+    const htmlOriginal = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculando...';
+
+    try {
+        const response = await fetch(`${API_URL}/requerimientos/calcular`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                peso,
+                altura,
+                edad,
+                sexo: SEXO_API[sexo] ?? 'MASCULINO',
+                factorActividad: actividad
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error del servidor: ${response.status}`);
+        }
+
+        const datos = await response.json();
+        const tmbRedondeado = Math.round(datos.tmb);
+        const getRedondeado = Math.round(datos.get);
+
+        document.getElementById('resultado').classList.add('show');
+        animarContador(document.getElementById('tmb'), tmbRedondeado);
+        animarContador(document.getElementById('get'), getRedondeado, 1100);
+
+        Historial.guardar(HISTORIAL_KEY_CALC, {
+            inputs: { sexo, edad, peso, altura, actividad },
+            resultados: { tmb: tmbRedondeado, get: getRedondeado }
+        });
+        renderHistorialCalculadora();
+
+    } catch (err) {
+        mostrarErrorCalc(
+            'No se pudo conectar con la API. ' +
+            'Verifica que el servidor esté corriendo en localhost:8080 ' +
+            'y que el frontend esté servido desde http://localhost:4200.'
+        );
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = htmlOriginal;
     }
-
-    const get = tmb * actividad;
-    const tmbRedondeado = Math.round(tmb);
-    const getRedondeado = Math.round(get);
-
-    document.getElementById('resultado').classList.add('show');
-    animarContador(document.getElementById('tmb'), tmbRedondeado);
-    animarContador(document.getElementById('get'), getRedondeado, 1100);
-
-    Historial.guardar(HISTORIAL_KEY_CALC, {
-        inputs: { sexo, edad, peso, altura, actividad },
-        resultados: { tmb: tmbRedondeado, get: getRedondeado }
-    });
-    renderHistorialCalculadora();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
