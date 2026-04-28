@@ -1,4 +1,5 @@
 const API = 'http://localhost:8080/api';
+const HISTORIAL_KEY = 'intercambios_historial';
 
 const UI = {
     grupos: document.getElementById('grupos-container'),
@@ -8,7 +9,9 @@ const UI = {
     intercambios: document.getElementById('intercambios-container'),
     seccionSubgrupos: document.getElementById('seccion-subgrupos'),
     seccionAlimentos: document.getElementById('seccion-alimentos'),
-    seccionIntercambios: document.getElementById('seccion-intercambios')
+    seccionIntercambios: document.getElementById('seccion-intercambios'),
+    historialContainer: document.getElementById('historial-container'),
+    btnLimpiarHistorial: document.getElementById('btn-limpiar-historial')
 };
 
 const requestState = {
@@ -89,12 +92,13 @@ const renderGrupos = (grupos) => {
     UI.grupos.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
-    grupos.forEach((grupo) => {
+    grupos.forEach((grupo, index) => {
         const button = createButton({
             className: 'grupo-btn',
             html: sanitize(grupo.nombre),
             onClick: () => seleccionarGrupo(grupo.id, button)
         });
+        button.style.animationDelay = `${index * 0.05}s`;
         fragment.appendChild(button);
     });
 
@@ -105,12 +109,13 @@ const renderSubgrupos = (subgrupos) => {
     UI.subgrupos.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
-    subgrupos.forEach((subgrupo) => {
+    subgrupos.forEach((subgrupo, index) => {
         const button = createButton({
             className: 'subgrupo-btn',
             html: `<span>${sanitize(subgrupo.nombre)}</span><span class="badge">${sanitize(subgrupo.kcalPromedio)} kcal prom.</span>`,
             onClick: () => seleccionarSubgrupo(subgrupo.id, button)
         });
+        button.style.animationDelay = `${index * 0.04}s`;
         fragment.appendChild(button);
     });
 
@@ -121,7 +126,7 @@ const renderAlimentos = (alimentos) => {
     UI.alimentos.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
-    alimentos.forEach((alimento) => {
+    alimentos.forEach((alimento, index) => {
         const card = createCard({
             className: 'alimento-card',
             html: `
@@ -130,6 +135,7 @@ const renderAlimentos = (alimentos) => {
             `,
             onClick: () => seleccionarAlimento(alimento, card)
         });
+        card.style.animationDelay = `${index * 0.04}s`;
         fragment.appendChild(card);
     });
 
@@ -184,7 +190,7 @@ const renderIntercambios = async (intercambios, token) => {
     }
 
     const fragment = document.createDocumentFragment();
-    intercambiosConNutrientes.forEach(({ alimento, nutrientes }) => {
+    intercambiosConNutrientes.forEach(({ alimento, nutrientes }, index) => {
         const card = createCard({
             className: 'intercambio-card',
             html: `
@@ -193,6 +199,7 @@ const renderIntercambios = async (intercambios, token) => {
                 ${nutrientes ? buildNutrientesHTML(nutrientes) : '<div class="empty">Sin datos nutricionales</div>'}
             `
         });
+        card.style.animationDelay = `${index * 0.06}s`;
         fragment.appendChild(card);
     });
 
@@ -280,11 +287,49 @@ async function seleccionarAlimento(alimento, card) {
         }
         renderSeleccionado(alimento, intercambios.length);
         await renderIntercambios(intercambios, token);
+        Historial.guardar(HISTORIAL_KEY, {
+            alimento: {
+                id: alimento.id,
+                nombre: alimento.nombre,
+                porcionGramos: alimento.porcionGramos,
+                descripcionMedida: alimento.descripcionMedida
+            },
+            totalIntercambios: intercambios.length
+        });
+        renderHistorialIntercambios();
     } catch {
         if (token === requestState.intercambiosToken) {
             setError(UI.intercambios, 'No se pudieron cargar los intercambios.');
         }
     }
 }
-//no se que hace esto jajajajaja
-document.addEventListener('DOMContentLoaded', cargarGrupos);
+const renderHistorialIntercambios = () => {
+    const lista = Historial.obtener(HISTORIAL_KEY);
+    if (lista.length === 0) {
+        UI.historialContainer.innerHTML = '<div class="empty">No hay consultas recientes.</div>';
+        return;
+    }
+    const fragment = document.createDocumentFragment();
+    lista.forEach(({ alimento, totalIntercambios, fecha }) => {
+        const item = document.createElement('div');
+        item.className = 'historial-item';
+        item.innerHTML = `
+            <div class="historial-fecha"><i class="fas fa-clock"></i> ${sanitize(Historial.formatearFecha(fecha))}</div>
+            <div class="historial-nombre">${sanitize(alimento.nombre)}</div>
+            <div class="historial-detalle">${sanitize(String(alimento.porcionGramos))}g · ${sanitize(alimento.descripcionMedida)}</div>
+            <span class="historial-badge">${sanitize(String(totalIntercambios))} intercambios</span>
+        `;
+        fragment.appendChild(item);
+    });
+    UI.historialContainer.innerHTML = '';
+    UI.historialContainer.appendChild(fragment);
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    cargarGrupos();
+    renderHistorialIntercambios();
+    UI.btnLimpiarHistorial.addEventListener('click', () => {
+        Historial.limpiar(HISTORIAL_KEY);
+        renderHistorialIntercambios();
+    });
+});
